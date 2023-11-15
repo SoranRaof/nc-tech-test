@@ -1,35 +1,65 @@
 import * as fs from "fs";
 import * as path from "path";
-import { Card, Page, Template } from "./Card";
+import { Card, CardResponse, Template, sizesLookup } from "./Card";
 
-export const cardsData = JSON.parse(
+const cardsData = JSON.parse(
   fs.readFileSync(path.join("./src/data/cards.json"), "utf8")
 );
 
-export const getCards = () => {
+export const getAllCardsData = () => {
   const allCards = cardsData.map((card: Card) => {
     const frontCoverTemplateId = card.pages[0].templateId;
     const frontCoverImageTemplate =
       getFrontCoverImageTemplate(frontCoverTemplateId);
-    return <Card>{
+    return <CardResponse>{
       title: card.title,
       imageUrl: frontCoverImageTemplate ? frontCoverImageTemplate.imageUrl : "",
-      card_id: card.card_id,
+      card_id: card.id,
     };
   });
   return allCards;
 };
 
-export const getCardById = (cardId: string) => {
-  const card = cardsData.find((card: Card) => card.card_id === cardId);
+export const getCardDataById = (cardId: string) => {
+  const card = getCardById(cardId);
+  const frontCoverTemplateId = card.pages[0].templateId;
+  const frontCoverImageTemplate =
+    getFrontCoverImageTemplate(frontCoverTemplateId);
+  const basePrice = getCardBasePrice(cardId);
+  const pages = getPagesByCardId(cardId);
+  const singleCard: CardResponse = {
+    title: card.title,
+    imageUrl: frontCoverImageTemplate ? frontCoverImageTemplate.imageUrl : "",
+    card_id: card.id,
+    base_price: basePrice ? basePrice.base_price : 0,
+    available_sizes: card.sizes.map(
+      (x) => (x = { id: x, title: sizesLookup[x] })
+    ),
+    pages: pages.pages,
+  };
+  return singleCard;
+};
+
+const getCardById = (cardId: string) => {
+  const card = cardsData.find((card: Card) => card.id === cardId);
   return card;
 };
 
-export const cardSizesData = JSON.parse(
-  fs.readFileSync(path.join("./src/data/sizes.json"), "utf8")
-);
+const getPagesByCardId = (cardId: string) => {
+  const card = getCardById(cardId);
+  return <Card>{
+    pages: card.pages,
+  };
+};
 
-export const templatesData = JSON.parse(
+const getCardBasePrice = (cardId: string) => {
+  const card = getCardById(cardId);
+  return <Card>{
+    base_price: card.base_price,
+  };
+};
+
+const templatesData = JSON.parse(
   fs.readFileSync(path.join("./src/data/templates.json"), "utf8")
 );
 
