@@ -3,7 +3,7 @@ export interface Card {
   imageUrl: string;
   id: string;
   pages?: Page[];
-  base_price?: number;
+  basePrice?: number;
   sizes?: any[];
 }
 
@@ -12,7 +12,7 @@ export interface CardResponse {
   imageUrl: string;
   card_id: string;
   pages?: Page[];
-  base_price?: number;
+  basePrice?: number;
   available_sizes?: any[];
 }
 
