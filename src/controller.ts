@@ -30,5 +30,6 @@ export const getSingleCardById = (req: Request, res: Response) => {
     res.json(card);
   } catch (error) {
     console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

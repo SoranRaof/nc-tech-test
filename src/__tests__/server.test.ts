@@ -109,4 +109,10 @@ describe("GET /cards/:cardId", () => {
     expect(response.status).toBe(404);
     expect(response.body).toEqual({ error: "Card not found" });
   });
+  test("should return a 500 status and an error message when there is an internal server error", async () => {
+    const mockGetAllCardsData = jest.spyOn(model, "getAllCardsData");
+    mockGetAllCardsData.mockImplementation(() => {
+      throw new Error("Internal Server Error");
+    });
+  });
 });
