@@ -7,38 +7,48 @@ export const cardsData = JSON.parse(
 );
 
 export const getAllCardsData = () => {
-  const allCards = cardsData.map((card: Card) => {
-    const frontCoverTemplateId = card.pages[0].templateId;
-    const frontCoverImageTemplate =
-      getFrontCoverImageTemplate(frontCoverTemplateId);
-    return <CardResponse>{
-      title: card.title,
-      imageUrl: frontCoverImageTemplate ? frontCoverImageTemplate.imageUrl : "",
-      card_id: card.id,
-    };
-  });
-  return allCards;
+  try {
+    const allCards = cardsData.map((card: Card) => {
+      const frontCoverTemplateId = card.pages[0].templateId;
+      const frontCoverImageTemplate =
+        getFrontCoverImageTemplate(frontCoverTemplateId);
+      return <CardResponse>{
+        title: card.title,
+        imageUrl: frontCoverImageTemplate
+          ? frontCoverImageTemplate.imageUrl
+          : "",
+        card_id: card.id,
+      };
+    });
+    return allCards;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const getCardDataById = (cardId: string) => {
   try {
     const card = getCardById(cardId);
-    const frontCoverTemplateId = card.pages[0].templateId;
-    const frontCoverImageTemplate =
-      getFrontCoverImageTemplate(frontCoverTemplateId);
-    const basePrice = getCardBasePrice(cardId);
-    const pages = getPagesByCardId(cardId);
-    const singleCard: CardResponse = {
-      title: card.title,
-      imageUrl: frontCoverImageTemplate ? frontCoverImageTemplate.imageUrl : "",
-      card_id: card.id,
-      basePrice: basePrice,
-      available_sizes: card.sizes.map(
-        (x) => (x = { id: x, title: sizesLookup[x] })
-      ),
-      pages: pages.pages,
-    };
-    return singleCard;
+    if (card && card.pages) {
+      const frontCoverTemplateId = card.pages[0].templateId;
+      const frontCoverImageTemplate =
+        getFrontCoverImageTemplate(frontCoverTemplateId);
+      const basePrice = getCardBasePrice(cardId);
+      const pages = getPagesByCardId(cardId);
+      const singleCard: CardResponse = {
+        title: card.title,
+        imageUrl: frontCoverImageTemplate
+          ? frontCoverImageTemplate.imageUrl
+          : "",
+        card_id: card.id,
+        basePrice: basePrice,
+        available_sizes: card.sizes.map(
+          (x) => (x = { id: x, title: sizesLookup[x] })
+        ),
+        pages: pages.pages,
+      };
+      return singleCard;
+    }
   } catch (err) {
     console.error(err);
   }
