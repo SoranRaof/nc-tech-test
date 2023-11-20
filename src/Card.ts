@@ -19,6 +19,7 @@ export interface CardResponse {
 export const sizesLookup = {
   sm: "Small",
   md: "Medium",
+  lg: "Large",
   gt: "Giant",
 };
 
